@@ -593,6 +593,7 @@ VideoPlayer.propTypes = {
   onHideControls: PropTypes.func,
   onShowControls: PropTypes.func,
   onMutePress: PropTypes.func,
+  onToggleFullScreen: PropTypes.func,
 };
 
 VideoPlayer.defaultProps = {
