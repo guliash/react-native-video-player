@@ -529,6 +529,12 @@ export default class VideoPlayer extends Component {
       </View>
     );
   }
+
+  toFullScreen() {
+    if (this.player) {
+      this.player.presentFullscreenPlayer();
+    }
+  }
 }
 
 VideoPlayer.propTypes = {
