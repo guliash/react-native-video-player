@@ -424,7 +424,7 @@ export default class VideoPlayer extends Component {
   }
 
   renderControls() {
-    const { customStyles } = this.props;
+    const { customStyles, isFullScreen } = this.props;
     return (
       <View style={[styles.controls, customStyles.controls]}>
         <TouchableOpacity
@@ -451,7 +451,7 @@ export default class VideoPlayer extends Component {
           <TouchableOpacity onPress={this.props.onToggleFullScreen} style={customStyles.controlButton}>
             <Icon
               style={[styles.extraControl, customStyles.controlIcon]}
-              name="fullscreen"
+              name={ isFullScreen ? "fullscreen-exit" : "fullscreen" }
               size={32}
             />
           </TouchableOpacity>
@@ -543,7 +543,7 @@ export default class VideoPlayer extends Component {
     );
   }
 
-  toFullScreen() {
+  toFullScreenIOS() {
     if (this.player) {
       this.player.presentFullscreenPlayer();
     }
@@ -565,6 +565,7 @@ VideoPlayer.propTypes = {
   controlsTimeout: PropTypes.number,
   disableControlsAutoHide: PropTypes.bool,
   disableFullscreen: PropTypes.bool,
+  isFullScreen: PropTypes.bool,
   loop: PropTypes.bool,
   resizeMode: Video.propTypes.resizeMode,
   hideControlsOnStart: PropTypes.bool,
