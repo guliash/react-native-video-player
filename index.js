@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View, ViewPropTypes} from 'react-native';
+import { Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View, ViewPropTypes, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Video from 'react-native-video'; // eslint-disable-line
 
@@ -101,7 +101,7 @@ export default class VideoPlayer extends Component {
       isStarted: props.autoplay,
       isPlaying: props.autoplay,
       hasEnded: false,
-      width: 200,
+      width: props.playerWidth,
       progress: 0,
       isMuted: props.defaultMuted,
       isControlsVisible: !props.hideControlsOnStart,
@@ -554,6 +554,7 @@ VideoPlayer.propTypes = {
   video: Video.propTypes.source,
   thumbnail: Image.propTypes.source,
   endThumbnail: Image.propTypes.source,
+  playerWidth: PropTypes.number,
   videoWidth: PropTypes.number,
   videoHeight: PropTypes.number,
   duration: PropTypes.number,
@@ -604,6 +605,7 @@ VideoPlayer.propTypes = {
 };
 
 VideoPlayer.defaultProps = {
+  playerWidth: Dimensions.get('window').width,
   videoWidth: 1280,
   videoHeight: 720,
   autoplay: false,
