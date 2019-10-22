@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View, ViewPropTypes, Dimensions } from 'react-native';
+import { Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, Text, View, ViewPropTypes, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Video from 'react-native-video'; // eslint-disable-line
 
@@ -83,6 +83,9 @@ const styles = StyleSheet.create({
   overlayButton: {
     flex: 1,
   },
+  speedControlText: {
+    color: white
+  }
 });
 
 export default class VideoPlayer extends Component {
@@ -98,6 +101,7 @@ export default class VideoPlayer extends Component {
       isControlsVisible: !props.hideControlsOnStart,
       duration: 0,
       isSeeking: false,
+      rate: 1
     };
 
     this.seekBarWidth = 200;
@@ -437,6 +441,24 @@ export default class VideoPlayer extends Component {
             />
           </TouchableOpacity>
         )}
+        {this.props.speed && (
+          <TouchableOpacity
+            style={ customStyles.speedControl }
+            onPress={ () => {
+              this.setState(state => {
+                if (state.rate === 4) {
+                  return { rate: 0.25 };
+                } else {
+                  return { rate: state.rate * 2 };
+                }
+              });
+              this.props.onSpeed();
+            }}>
+            <Text style={[ styles.speedControlText, customStyles.speedControlText ]}>
+              {`${ this.state.rate }x`}
+            </Text>
+          </TouchableOpacity>
+        )}
         {this.props.disableFullscreen ? null : (
           <TouchableOpacity onPress={this.props.onToggleFullScreen} style={customStyles.controlButton}>
             <Icon
@@ -480,6 +502,7 @@ export default class VideoPlayer extends Component {
           onLoad={this.onLoad}
           source={video}
           resizeMode={resizeMode}
+          rate={this.state.rate}
         />
         <View
           style={[
@@ -559,6 +582,7 @@ VideoPlayer.propTypes = {
   endWithThumbnail: PropTypes.bool,
   disableSeek: PropTypes.bool,
   pauseOnPress: PropTypes.bool,
+  speed: PropTypes.bool,
   fullScreenOnLongPress: PropTypes.bool,
   customStyles: PropTypes.shape({
     wrapper: ViewPropTypes.style,
@@ -578,6 +602,8 @@ VideoPlayer.propTypes = {
     thumbnail: Image.propTypes.style,
     playButton: TouchableOpacity.propTypes.style,
     playArrow: Icon.propTypes.style,
+    speedControl: TouchableOpacity.propTypes.style,
+    speedControlText: Text.propTypes.style
   }),
   onEnd: PropTypes.func,
   onProgress: PropTypes.func,
@@ -587,7 +613,8 @@ VideoPlayer.propTypes = {
   onHideControls: PropTypes.func,
   onShowControls: PropTypes.func,
   onMutePress: PropTypes.func,
-  onToggleFullScreen: PropTypes.func,
+  onSpeed: PropTypes.func,
+  onToggleFullScreen: PropTypes.func
 };
 
 VideoPlayer.defaultProps = {
