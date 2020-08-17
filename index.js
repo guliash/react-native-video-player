@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View, ViewPropTypes, Dimensions } from 'react-native';
+import { Image, ImageBackground, Platform, StyleSheet, TouchableOpacity, View, ViewPropTypes, Dimensions, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Video from 'react-native-video'; // eslint-disable-line
+
+const SECONDS_IN_MINUTE = 60;
+const SECONDS_IN_HOUR = 3600;
 
 const BackgroundImage = ImageBackground || Image; // fall back to Image if RN < 0.46
 
@@ -54,6 +57,12 @@ const styles = StyleSheet.create({
     color: 'white',
     padding: 8,
   },
+  videoTime: {
+    color: '#FFF',
+    marginLeft: -8,
+    marginRight: 10,
+    fontVariant: [ 'tabular-nums' ]
+  },
   seekBar: {
     alignItems: 'center',
     height: 30,
@@ -102,6 +111,7 @@ export default class VideoPlayer extends Component {
       isPlaying: props.autoplay,
       hasEnded: false,
       width: props.playerWidth,
+      currentTime: 0,
       progress: 0,
       isMuted: props.defaultMuted,
       isControlsVisible: !props.hideControlsOnStart,
@@ -172,6 +182,7 @@ export default class VideoPlayer extends Component {
     }
     this.setState({
       progress: event.currentTime / (this.props.duration || this.state.duration),
+      currentTime: event.currentTime
     });
   }
 
@@ -348,6 +359,36 @@ export default class VideoPlayer extends Component {
     this.showControls();
   }
 
+  videoTimeText(timeInSeconds) {
+    const roundedTimeInSeconds = Math.floor(timeInSeconds);
+
+    const hours = Math.floor(roundedTimeInSeconds / SECONDS_IN_HOUR);
+
+    let result = '';
+
+    if (hours > 0) {
+      result += this.timeUnitString(hours, false);
+    }
+
+    const minutesRem = roundedTimeInSeconds % SECONDS_IN_HOUR;
+    const minutes = Math.floor(minutesRem / SECONDS_IN_MINUTE);
+    const minutesString = this.timeUnitString(minutes, result.length > 0);
+    result += `${ result.length > 0 ? ':' : '' }${ minutesString }`;
+
+    const secondsRem = minutesRem % SECONDS_IN_MINUTE;
+    const secondsString = this.timeUnitString(secondsRem, result.length > 0);
+    result += `:${ secondsString }`;
+
+    return result;
+  }
+
+  timeUnitString(units, hasPrevious) {
+    if (units < 10 && hasPrevious) {
+      return `0${ units }`;
+    }
+    return `${ units }`;
+  }
+
   renderStartButton() {
     const { customStyles } = this.props;
     return (
@@ -437,6 +478,9 @@ export default class VideoPlayer extends Component {
             size={32}
           />
         </TouchableOpacity>
+        <Text style={ styles.videoTime }>
+          { `${ this.videoTimeText(this.state.currentTime) } / ${ this.videoTimeText(this.state.duration) }` }
+        </Text>
         {this.renderSeekBar()}
         {this.props.muted ? null : (
           <TouchableOpacity onPress={this.onMutePress} style={customStyles.controlButton}>
