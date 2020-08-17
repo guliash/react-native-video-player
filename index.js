@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
   },
   videoTime: {
     color: '#FFF',
+    fontSize: 14,
     marginLeft: -8,
     marginRight: 10,
     fontVariant: [ 'tabular-nums' ]
