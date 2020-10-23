@@ -361,7 +361,7 @@ export default class VideoPlayer extends Component {
   }
 
   videoTimeText(timeInSeconds) {
-    const roundedTimeInSeconds = Math.floor(timeInSeconds);
+    const roundedTimeInSeconds = timeInSeconds < 0 ? 0 : Math.floor(timeInSeconds);
 
     const hours = Math.floor(roundedTimeInSeconds / SECONDS_IN_HOUR);
 
